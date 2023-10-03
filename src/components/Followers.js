@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 const Followers = () => {
   const { followers } = React.useContext(GithubContext);
+  console.log('hello world');
 
   return (
     <div className="followers">
