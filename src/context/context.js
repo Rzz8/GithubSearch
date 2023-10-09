@@ -14,21 +14,34 @@ const GithubProvider = ({ children }) => {
   const [followers, setFollowers] = useState(mockFollowers);
 
   const [requests, setRequests] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [error, setError] = useState({ show: false, msg: "" });
 
   const searchGithubUser = async (user) => {
+    // whenever we search user, we reset the error to none
+    setError({ show: false, msg: "" });
+    setIsLoading(true);
+
+    // use axios to fetch data
     const response = await axios(`${rootUrl}/users/${user}`).catch((error) =>
       console.log(error)
     );
 
-    console.log(response);
     if (response) {
       setGithubUser(response.data);
+      const { login, followers_url } = response.data;
+      axios(`${rootUrl}/users/${login}/repos?per_page=100`).then((response) =>
+        setRepos(response.data)
+      );
+      axios(`${followers_url}?per_page=100`).then((response) =>
+        setFollowers(response.data)
+      );
     } else {
       setError({ show: true, msg: "the input user does not exist" });
     }
+    checkRequests();
+    setIsLoading(false);
   };
 
   const checkRequests = () => {
@@ -61,6 +74,7 @@ const GithubProvider = ({ children }) => {
         requests,
         error,
         searchGithubUser,
+        isLoading,
       }}
     >
       {children}
