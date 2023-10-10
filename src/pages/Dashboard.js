@@ -5,7 +5,6 @@ import { GithubContext } from "../context/context";
 
 const Dashboard = () => {
   const { isLoading } = useContext(GithubContext);
-  console.log(isLoading);
 
   if (isLoading) {
     return (
